@@ -1,0 +1,31 @@
+From 0448c3470c09d6451a11f058710678b31c8c289f Mon Sep 17 00:00:00 2001
+From: Daniel Ching <dching@nvidia.com>
+Date: Tue, 8 Sep 2026 20:59:56 -0500
+Subject: [PATCH 4/4] Bump pybind11 target C++ standard to C++17
+
+CUDA 13's bundled libcu++/CCCL headers require at least C++17 and fail
+with a hard #error when compiled with an older dialect. The
+controller_wrappers pybind11 target hardcodes CXX_STANDARD 14, and
+since bindings.cc is compiled as CUDA source on CUDA builds, CMake
+derives the nvcc -std= flag from this same CXX_STANDARD property.
+Raising it to C++17 is required for the CUDA 13 toolchain and is safe
+for all other supported compilers/toolchains.
+---
+ cmake/FindPybind11.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/FindPybind11.cmake b/cmake/FindPybind11.cmake
+index ed26dd1..a2f0987 100644
+--- a/cmake/FindPybind11.cmake
++++ b/cmake/FindPybind11.cmake
+@@ -91,7 +91,7 @@ function(basic_pybind11_add_module target_name)
+     set_target_properties(${target_name} PROPERTIES CXX_VISIBILITY_PRESET "hidden")
+     set_target_properties(${target_name} PROPERTIES CUDA_VISIBILITY_PRESET "hidden")
+     set_target_properties(${target_name} PROPERTIES
+-        CXX_STANDARD 14
++        CXX_STANDARD 17
+         LINKER_LANGUAGE CXX)
+     # Warning: Do not merge PROPERTIES when one of the variables can be empty, it breaks
+     # the rest of the properties so they are not properly added.
+--
+2.55.0

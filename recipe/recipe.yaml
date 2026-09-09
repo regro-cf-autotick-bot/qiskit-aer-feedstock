@@ -25,6 +25,11 @@ source:
     # compile error on gcc 14
     # Submitted upstream in https://github.com/Qiskit/qiskit-aer/pull/2417
     - 0003-Switch-from-pybind11-enum_-to-native_enum.patch
+    # Bump the pybind11 target's CXX_STANDARD from 14 to 17. CUDA 13's
+    # bundled libcu++/CCCL headers require at least C++17 and CMake derives
+    # the nvcc -std= flag for the CUDA-compiled bindings.cc from this same
+    # property.
+    - 0004-Bump-pybind11-target-C-standard-to-C-17.patch
 
 build:
   number: ${{ build }}
